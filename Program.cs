@@ -24,7 +24,7 @@ namespace VerapSurveyChecker
             Console.Write("Do you want to watch the browser while casting an inorganic vote? y/n: ");
             string watch = Console.ReadLine();
             Console.WriteLine("DON'T CLOSE THIS WINDOW!");
-            Console.WriteLine("Casting vote for Sara Duterte...");
+            Console.WriteLine("Casting vote for Sara Duterte...\n");
 
             InitLists();
             MainAsync("https://pilipinas2022.ph/", voteCast, watch).Wait();
@@ -104,6 +104,7 @@ namespace VerapSurveyChecker
                     //});
                     Thread.Sleep(50);
                     await page.CloseAsync();
+                    Console.WriteLine($"{fullName} | {address} | {mobile}");
                     File.AppendAllText("log.csv",$"{fullName},{address},{mobile}\n");
                 }
                 catch { }
