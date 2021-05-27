@@ -8,6 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Threading;
 
 namespace VerapSurveyChecker
 {
@@ -48,42 +49,50 @@ namespace VerapSurveyChecker
            
             for(int i = 0; i < voteCast; i++)
             {
-                Page page = await browser.NewPageAsync();
-                page.DefaultTimeout = 180000;
-                page.DefaultNavigationTimeout = 180000;
-                await page.SetViewportAsync(new ViewPortOptions
+                try
                 {
-                    Width = 1280,
-                    Height = 720,
-                    DeviceScaleFactor = 0.75
-                });
+                    Page page = await browser.NewPageAsync();
+                    page.DefaultTimeout = 180000;
+                    page.DefaultNavigationTimeout = 180000;
+                    await page.SetViewportAsync(new ViewPortOptions
+                    {
+                        Width = 1280,
+                        Height = 720,
+                        DeviceScaleFactor = 0.75
+                    });
 
-                string userAgent = RandomUa.RandomUserAgent;
-                await page.SetUserAgentAsync(userAgent);
+                    string userAgent = RandomUa.RandomUserAgent;
+                    await page.SetUserAgentAsync(userAgent);
 
-                await page.GoToAsync(pageUrl);
+                    await page.GoToAsync(pageUrl);
 
-                await page.WaitForSelectorAsync("#newbtnsaraduterte");
-                await page.ClickAsync("#newbtnsaraduterte", new ClickOptions { Delay = HumanDelay(1, 2) });
+                    await page.WaitForSelectorAsync("#newbtnsaraduterte");
+                    await page.ClickAsync("#newbtnsaraduterte", new ClickOptions { Delay = HumanDelay(1, 2) });
 
-                await page.WaitForSelectorAsync("#FullName");
-                await page.FocusAsync("#FullName");
-                await page.Keyboard.TypeAsync(GetRandomName());
+                    await page.WaitForSelectorAsync("#FullName");
+                    await page.FocusAsync("#FullName");
+                    await page.Keyboard.TypeAsync(GetRandomName());
 
-                var address = GetRandomAddress();
-                await page.SelectAsync("#Province", selectedProvince);
+                    var address = GetRandomAddress();
+                    await page.SelectAsync("#Province", selectedProvince);
 
-                await page.FocusAsync("#Address");
-                await page.Keyboard.TypeAsync(address);
+                    await page.FocusAsync("#Address");
+                    await page.Keyboard.TypeAsync(address);
 
-                await page.FocusAsync("#Mobile");
-                await page.Keyboard.TypeAsync(GetRandomPhoneNum());
+                    await page.FocusAsync("#Mobile");
+                    await page.Keyboard.TypeAsync(GetRandomPhoneNum());
 
-                await page.ClickAsync("input[name='vote']", new ClickOptions { Delay = HumanDelay(1, 2) });
+                    await page.ClickAsync("input[name='vote']", new ClickOptions { Delay = HumanDelay(1, 2) });
 
-                await page.WaitForSelectorAsync("#newbtnsaraduterte");
-                //await page.ReloadAsync(); 
-                await page.CloseAsync();
+                    await page.WaitForSelectorAsync("#newbtnsaraduterte");
+                    //await page.WaitForNavigationAsync(new NavigationOptions
+                    //{
+                    //    WaitUntil = new[] { WaitUntilNavigation.Networkidle0 }
+                    //});
+                    Thread.Sleep(50);
+                    await page.CloseAsync();
+                }
+                catch { }
             }
 
             Console.WriteLine("Casting of inorganic vote done! Haha!");
