@@ -20,8 +20,13 @@ namespace VerapSurveyChecker
             Console.WriteLine("==========================");
             Console.Write("How many votes do you want to cast? ");
             int voteCast = int.Parse(Console.ReadLine());
+            Console.Write("Do you want to watch the browser while casting an inorganic vote? y/n: ");
+            string watch = Console.ReadLine();
+            Console.WriteLine("DON'T CLOSE THIS WINDOW!");
+            Console.WriteLine("Casting vote for Sara Duterte...");
+
             InitLists();
-            MainAsync("https://pilipinas2022.ph/", voteCast).Wait();
+            MainAsync("https://pilipinas2022.ph/", voteCast, watch).Wait();
         }
 
         public static List<FirstName> firstnames = new List<FirstName>();
@@ -38,14 +43,19 @@ namespace VerapSurveyChecker
 
         public static Random rnd = new Random();
 
-        public static async Task MainAsync(string pageUrl, int voteCast = 10)
-        {            
-            var browser = await Puppeteer.LaunchAsync(new LaunchOptions
+        public static async Task MainAsync(string pageUrl, int voteCast = 10, string watch = "n")
+        {
+            var lo = new LaunchOptions
             {
                 ExecutablePath = @"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
-                Headless = false,
+                Headless = true,
                 Args = new string[] { "--disable-web-security", "--disable-features=site-per-process" } // "--disable-features=IsolateOrigins,site-per-process", 
-            });
+            };
+
+            if (watch.ToLower() == "y")
+                lo.Headless = false;
+
+            var browser = await Puppeteer.LaunchAsync(lo);                           
            
             for(int i = 0; i < voteCast; i++)
             {
