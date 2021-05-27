@@ -46,7 +46,7 @@ namespace VerapSurveyChecker
                 Args = new string[] { "--disable-web-security", "--disable-features=site-per-process" } // "--disable-features=IsolateOrigins,site-per-process", 
             });
            
-            for(int i = 0; i < 5; i++)
+            for(int i = 0; i < voteCast; i++)
             {
                 Page page = await browser.NewPageAsync();
                 page.DefaultTimeout = 180000;
