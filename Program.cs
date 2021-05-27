@@ -82,7 +82,8 @@ namespace VerapSurveyChecker
 
                     await page.WaitForSelectorAsync("#FullName");
                     await page.FocusAsync("#FullName");
-                    await page.Keyboard.TypeAsync(GetRandomName());
+                    var fullName = GetRandomName();
+                    await page.Keyboard.TypeAsync(fullName);
 
                     var address = GetRandomAddress();
                     await page.SelectAsync("#Province", selectedProvince);
@@ -90,8 +91,9 @@ namespace VerapSurveyChecker
                     await page.FocusAsync("#Address");
                     await page.Keyboard.TypeAsync(address);
 
+                    var mobile = GetRandomPhoneNum();
                     await page.FocusAsync("#Mobile");
-                    await page.Keyboard.TypeAsync(GetRandomPhoneNum());
+                    await page.Keyboard.TypeAsync(mobile);
 
                     await page.ClickAsync("input[name='vote']", new ClickOptions { Delay = HumanDelay(1, 2) });
 
@@ -102,6 +104,7 @@ namespace VerapSurveyChecker
                     //});
                     Thread.Sleep(50);
                     await page.CloseAsync();
+                    File.AppendAllText("log.csv",$"{fullName},{address},{mobile}\n");
                 }
                 catch { }
             }
