@@ -9,6 +9,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Threading;
+using System.Diagnostics;
 
 namespace VerapSurveyChecker
 {
@@ -106,6 +107,12 @@ namespace VerapSurveyChecker
             }
 
             Console.WriteLine("Casting of inorganic vote done! Haha!");
+
+            Process process = new Process(); 
+            process.StartInfo.UseShellExecute = true; 
+            process.StartInfo.FileName = "chrome"; 
+            process.StartInfo.Arguments = @"https://pilipinas2022.ph/"; 
+            process.Start();
         }
 
         public static string GetRandomName()
