@@ -129,14 +129,23 @@ namespace VerapSurveyChecker
         public static string GetRandomAddress()
         {
             string address;
+            string comma = "";
             do
             {
                 var idx = rnd.Next(0, totalBarangay);
                 var brgy = barangays[idx];
                 var cm = cityMuns.FirstOrDefault(x => x.citymunCode == brgy.citymunCode);
                 var prov = provinces.FirstOrDefault(x => x.provCode == brgy.provCode);
-                selectedProvince = prov.provDesc;
-                address = $"{brgy.brgyDesc}, {cm.citymunDesc}, {prov.provDesc}";
+                if(string.IsNullOrEmpty(prov.provDesc))
+                {
+                    selectedProvince = "National Capital Region (NCR)";
+                }
+                else
+                {
+                    selectedProvince = prov.provDesc;
+                    comma = ", ";
+                }
+                address = $"{brgy.brgyDesc}, {cm.citymunDesc}{comma}{prov.provDesc}";
             } while (string.IsNullOrWhiteSpace(address));
 
             return address;
