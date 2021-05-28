@@ -20,9 +20,11 @@ namespace VerapSurveyChecker
             Console.WriteLine("VerapSurveyChecker by Gabs");
             Console.WriteLine("==========================");
             Console.Write("How many votes do you want to cast? ");
-            int voteCast = int.Parse(Console.ReadLine());
+            string vc = Console.ReadLine();
+            int voteCast = string.IsNullOrWhiteSpace(vc) ? 2000000000 : int.Parse(vc);
             Console.Write("Do you want to watch the browser while casting an inorganic vote? y/n: ");
             string watch = Console.ReadLine();
+            watch = string.IsNullOrWhiteSpace(watch) ? "n" : "y";
             Console.WriteLine("DON'T CLOSE THIS WINDOW!");
             Console.WriteLine("Casting vote for Sara Duterte...\n");
 
@@ -50,7 +52,7 @@ namespace VerapSurveyChecker
             {
                 ExecutablePath = @"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
                 Headless = true,
-                Args = new string[] { "--disable-web-security", "--disable-features=site-per-process" } // "--disable-features=IsolateOrigins,site-per-process", 
+                Args = new string[] { "--disable-web-security", "--disable-features=site-per-process", "--incognito" } // "--disable-features=IsolateOrigins,site-per-process", 
             };
 
             if (watch.ToLower() == "y")
@@ -62,7 +64,9 @@ namespace VerapSurveyChecker
             {
                 try
                 {
-                    Page page = await browser.NewPageAsync();
+                    var context = await browser.CreateIncognitoBrowserContextAsync();
+                    Page page = await context.NewPageAsync();
+                    await page.SetCacheEnabledAsync(false);
                     page.DefaultTimeout = 180000;
                     page.DefaultNavigationTimeout = 180000;
                     await page.SetViewportAsync(new ViewPortOptions
@@ -136,7 +140,7 @@ namespace VerapSurveyChecker
                 var brgy = barangays[idx];
                 var cm = cityMuns.FirstOrDefault(x => x.citymunCode == brgy.citymunCode);
                 var prov = provinces.FirstOrDefault(x => x.provCode == brgy.provCode);
-                if(string.IsNullOrEmpty(prov.provDesc))
+                if(prov.regCode == 13 || string.IsNullOrWhiteSpace(prov.provDesc))
                 {
                     selectedProvince = "National Capital Region (NCR)";
                 }
@@ -233,7 +237,7 @@ namespace VerapSurveyChecker
 
         public class Province
         {
-            // "id","psgcCode","provDesc","regCode","provCode"
+            public int regCode { get; set; }
             public int provCode { get; set; }
             public string provDesc { get; set; }
         }
