@@ -25,11 +25,14 @@ namespace VerapSurveyChecker
             Console.Write("Do you want to watch the browser while casting an inorganic vote? y/n: ");
             string watch = Console.ReadLine();
             watch = string.IsNullOrWhiteSpace(watch) ? "n" : "y";
+            Console.Write("Go incognito? y/n: ");
+            string inc = Console.ReadLine();
+            inc = string.IsNullOrWhiteSpace(inc) ? "n" : "y";
             Console.WriteLine("DON'T CLOSE THIS WINDOW!");
             Console.WriteLine("Casting vote for Sara Duterte...\n");
 
             InitLists();
-            MainAsync("https://pilipinas2022.ph/", voteCast, watch).Wait();
+            MainAsync("https://pilipinas2022.ph/", voteCast, watch, inc).Wait();
         }
 
         public static List<FirstName> firstnames = new List<FirstName>();
@@ -46,13 +49,13 @@ namespace VerapSurveyChecker
 
         public static Random rnd = new Random();
 
-        public static async Task MainAsync(string pageUrl, int voteCast = 10, string watch = "n")
+        public static async Task MainAsync(string pageUrl, int voteCast = 10, string watch = "n", string inc = "n")
         {
             var lo = new LaunchOptions
             {
                 ExecutablePath = @"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
                 Headless = true,
-                Args = new string[] { "--disable-web-security", "--disable-features=site-per-process", "--incognito" } // "--disable-features=IsolateOrigins,site-per-process", 
+                Args = new string[] { "--disable-web-security", "--disable-features=site-per-process" } // "--disable-features=IsolateOrigins,site-per-process", 
             };
 
             if (watch.ToLower() == "y")
@@ -64,8 +67,15 @@ namespace VerapSurveyChecker
             {
                 try
                 {
-                    var context = await browser.CreateIncognitoBrowserContextAsync();
-                    Page page = await context.NewPageAsync();
+                    Page page;
+                    if (inc.ToLower() == "y")
+                    {
+                        var context = await browser.CreateIncognitoBrowserContextAsync();
+                        page = await context.NewPageAsync();
+                    }
+                    else
+                        page = await browser.NewPageAsync();
+                        
                     await page.SetCacheEnabledAsync(false);
                     page.DefaultTimeout = 180000;
                     page.DefaultNavigationTimeout = 180000;
