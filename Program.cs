@@ -151,16 +151,16 @@ namespace VerapSurveyChecker
                 var brgy = barangays[idx];
                 var cm = cityMuns.FirstOrDefault(x => x.citymunCode == brgy.citymunCode);
                 var prov = provinces.FirstOrDefault(x => x.provCode == brgy.provCode);
-                if(prov.regCode == 13 || string.IsNullOrWhiteSpace(prov.provDesc))
+                if(brgy.regCode == 13 || string.IsNullOrWhiteSpace(prov.provDesc))
                 {
                     selectedProvince = "National Capital Region (NCR)";
                 }
                 else
                 {
                     selectedProvince = prov.provDesc;
-                    comma = ", ";
+                    comma = ",";
                 }
-                address = $"{brgy.brgyDesc}, {cm.citymunDesc}{comma}{prov.provDesc}";
+                address = $"{brgy.brgyDesc}, {cm.citymunDesc}{comma} {prov.provDesc}";
             } while (string.IsNullOrWhiteSpace(address));
 
             return address;
@@ -239,6 +239,7 @@ namespace VerapSurveyChecker
             public string brgyDesc { get; set; }
             public int citymunCode { get; set; }
             public int provCode { get; set; }
+            public int regCode { get; set; }
         }
 
         public class CityMun
@@ -248,8 +249,7 @@ namespace VerapSurveyChecker
         }
 
         public class Province
-        {
-            public int regCode { get; set; }
+        {            
             public int provCode { get; set; }
             public string provDesc { get; set; }
         }
